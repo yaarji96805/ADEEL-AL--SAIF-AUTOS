@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADEEL AL-SAIF AUTOS</title>
+<style>
+body{margin:0;font-family:Arial;background:#f1f1f1}
+.head{background:#cc0000;color:white;text-align:center;padding:18px;position:sticky;top:0;z-index:99}
+.head h1{margin:0;font-size:28px;letter-spacing:1px}
+.head .honda{background:white;color:#cc0000;display:inline-block;padding:4px 20px;border-radius:4px;font-weight:bold;font-size:14px;margin-bottom:6px}
+.wrap{max-width:1000px;margin:auto;padding:12px}
+.search{width:100%;padding:13px;border:2px solid #cc0000;border-radius:10px;font-size:16px;box-sizing:border-box}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:15px}
+.box{background:white;border-radius:12px;padding:10px;text-align:center;box-shadow:0 3px 10px #0001;border-bottom:4px solid #cc0000}
+.box img{width:100%;height:110px;object-fit:contain;background:#fff;border-radius:8px}
+.name{font-weight:bold;font-size:14px;margin:8px 0 3px;height:34px;overflow:hidden}
+.model{font-size:11px;color:gray;margin-bottom:6px}
+.priceBox{display:flex;justify-content:center;align-items:center;gap:4px;margin:5px 0}
+.priceBox input{width:75px;padding:6px;border:1.5px solid #cc0000;border-radius:6px;text-align:center;font-weight:bold;color:#cc0000;font-size:15px}
+.btn{width:100%;padding:8px;background:#cc0000;color:white;border:none;border-radius:20px;font-weight:bold;cursor:pointer;margin-top:6px}
+.btn2{background:#222;font-size:11px;padding:4px 8px;border-radius:10px;margin:2px}
+.foot{text-align:center;padding:20px;color:#666;background:white;margin-top:20px;font-size:12px}
+.wa{position:fixed;bottom:20px;right:15px;background:#25d366;color:white;padding:12px 18px;border-radius:30px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px #0003}
+</style>
+</head>
+<body>
+
+<div class="head">
+<div class="honda">HONDA GENUINE PARTS</div>
+<h1>ADEEL AL-SAIF AUTOS</h1>
+<div style="font-size:12px;margin-top:4px">Honda Motorcycle Spare Parts - Price Aap Khud Set Kar Sakte Ho</div>
+</div>
+
+<div class="wrap">
+<input class="search" id="s" onkeyup="filter()" placeholder="🔍 Search Part - CD70, CG125, Brake, Plug...">
+
+<div class="grid" id="grid"></div>
+
+<button class="btn" style="background:#222;margin-top:15px" onclick="addPart()">+ Naya Part + Image Add Karo</button>
+<button class="btn" style="background:green" onclick="saveAll()">💾 All Prices Save Karo</button>
+</div>
+
+<div class="foot">ADEEL AL-SAIF AUTOS - No Gallery, Only Genuine Parts With Images | Contact: 0300-XXXXXXX<br>Developed for Adeel - Honda Parts</div>
+<a class="wa" href="https://wa.me/92 345 2677902">💬 Order WhatsApp</a>
+
+<script>
+let parts = JSON.parse(localStorage.getItem('adeel_final')) || [
+{id:1,n:"Brake Shoe CD70",m:"CD70 Front/Rear - Crown",p:450,img:"https://img2.tradewheel.com/uploads/images/products/6/7/high-quality-cd70-motorcycle-brake-shoe-for-honda-cd-701-0576017001620654315.jpg.webp"},
+{id:2,n:"Spark Plug NGK",m:"CD70 CG125 Genuine",p:380,img:"https://cdn11.bigcommerce.com/s-cz3avc91ke/images/stencil/1280x1280/products/1772/4676/31916-KRM-841_1__51399.1706819533.png"},
+{id:3,n:"Air Filter CD70",m:"Honda CD70 Genuine 2013+",p:320,img:"https://www.atlashonda.com.pk/wp-content/uploads/2024/11/atlashonda_Air-Filter.webp"},
+{id:4,n:"Clutch Plate Set",m:"CG125 Complete Heavy Duty",p:1850,img:"https://i.ebayimg.com/images/g/5X4AAOSwN2RfjZD-/s-l400.jpg"},
+{id:5,n:"Chain Garari Set",m:"CD70 38T/15T Genuine",p:2100,img:"https://www.atlashonda.com.pk/wp-content/uploads/2024/11/atlashonda_Air-Filter.webp"},
+{id:6,n:"Head Light Bulb",m:"CD70 CG125 12V",p:150,img:"https://cdn11.bigcommerce.com/s-cz3avc91ke/images/stencil/1280x1280/products/1772/4676/31916-KRM-841_1__51399.1706819533.png"},
+{id:7,n:"Engine Oil Honda",m:"4T 1 Litre Genuine",p:1250,img:"https://www.atlashonda.com.pk/wp-content/uploads/2024/11/atlashonda_Air-Filter.webp"},
+{id:8,n:"Side Mirror Pair",m:"CD70 Chrome Pair",p:650,img:"https://img2.tradewheel.com/uploads/images/products/6/7/high-quality-cd70-motorcycle-brake-shoe-for-honda-cd-701-0576017001620654315.jpg.webp"}
+];
+
+function render(){
+let h='';
+parts.forEach((x,i)=>{
+h+=`<div class="box" data-n="${x.n.toLowerCase()}">
+<img src="${x.img}" onerror="this.src='https://via.placeholder.com/150?text=HONDA+PART'">
+<div class="name">${x.n}</div>
+<div class="model">${x.m}</div>
+<div class="priceBox">Rs.<input type="number" value="${x.p}" onchange="parts[${i}].p=this.value;save()"></div>
+<button class="btn" onclick="order('${x.n}')">Order</button>
+<div><button class="btn2" onclick="editImg(${i})">🖼️ Image Badlo</button>
+<button class="btn2" style="background:#cc0000;color:white" onclick="del(${i})">Delete</button></div>
+</div>`;
+});
+document.getElementById('grid').innerHTML=h;
+}
+function save(){localStorage.setItem('adeel_final',JSON.stringify(parts));}
+function saveAll(){save(); alert('✅ ADEEL AL-SAIF AUTOS - All Prices Saved!');}
+function filter(){
+let q=document.getElementById('s').value.toLowerCase();
+document.querySelectorAll('.box').forEach(b=>{
+b.style.display=b.getAttribute('data-n').includes(q)?'block':'none';
+});
+}
+function del(i){if(confirm('Delete?')){parts.splice(i,1);render();save();}}
+function editImg(i){
+let url=prompt('Nayi Image ka Link Paste Karo (Google se copy):',parts[i].img);
+if(url){parts[i].img=url;render();save();}
+}
+function addPart(){
+let n=prompt('Part Name:'); if(!n) return;
+let m=prompt('Model:'); 
+let p=prompt('Price:');
+let img=prompt('Image Link (Google se image ka link copy karke paste karo):','https://via.placeholder.com/150?text=HONDA+PART');
+if(p){parts.push({n,m:m||'Honda Genuine',p:parseInt(p),img:img});render();save();}
+}
+function order(name){alert(name+' - Order ke liye WhatsApp karo: ADEEL AL-SAIF AUTOS');}
+
+render();
+</script>
+</body>
+</html>
